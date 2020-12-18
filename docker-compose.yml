@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+
+  backend:
+    build: ./
+    restart: always
+    command: ./commands/${RUN_MODE}.sh
+    ports:
+      - 8010:${PORT}
+    volumes:
+      - ./:/srv
+      - ./commands:/srv/commands
+      - static_content:/var/www/news_board
+    environment:
+      - DJANGO_SETTINGS_MODULE=app.settings.${RUN_MODE}
+    env_file:
+      - .env
+    depends_on:
+      - postgresql
+
+  postgresql:
+    image: "postgres:12"
+    env_file:
+      - .env
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - 5444:5432
+
+  redis:
+    image: redis
+    env_file: .env
+    restart: always
+
+  redis-commander:
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+    - REDIS_HOSTS=redis
+    ports:
+    - "8081:8081"
+
+  celery:
+    env_file: .env
+    build: .
+    command: ./commands/start_celery.sh
+    restart: always
+    depends_on:
+      - redis
+    environment:
+      - DJANGO_SETTINGS_MODULE=app.settings.${RUN_MODE}
+    volumes:
+      - ./:/srv
+      - ./commands:/srv/commands
+
+  celerybeat:
+    env_file: .env
+    build: .
+    command: ./commands/start_celerybeat.sh
+    restart: always
+    depends_on:
+      - redis
+      - celery
+    volumes:
+      - ./:/srv
+      - ./commands:/srv/commands
+
+volumes:
+  pgdata: {}
+  static_content: {}

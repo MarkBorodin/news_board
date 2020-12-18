@@ -1,0 +1,28 @@
+{% extends 'base_template.html' %}
+{% load crispy_forms_tags %}
+
+{% block title%}
+<title>Create comment</title>
+{% endblock %}
+
+{% block header %}
+<h3>Create comment for {{ news }}</h3>
+{% endblock %}
+
+
+{% block content %}
+    <form method="post">
+
+        {% csrf_token %}
+
+        <h5>Text:</h5>
+        {{form.text}}<br>
+
+        <h5>Author name:</h5>
+        {{form.comment_author_name}}<br>
+
+        {{ form.news.as_hidden }}<br>
+
+        <button type="submit" class="btn btn-success">Add comment</button><br>
+    </form>
+{% endblock %}

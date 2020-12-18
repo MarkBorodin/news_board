@@ -1,0 +1,28 @@
+{% extends 'base_template.html' %}
+
+
+{% block content %}
+
+    {% for some_news in news_list %}
+        <div>
+            <br>
+            <h5><a href="{{some_news.link}}">{{some_news}}</a> (<a href="{{some_news.link}}">{{some_news.link}}</a> )</h5>
+            by {{some_news.author_name}} | {{some_news.create_date}} | amount of upvotes: {{some_news.amount_of_upvotes}}
+
+            <form method="post" action="{% url 'news_board:to_vote' some_news.id %}">{% csrf_token %}
+                <button class="btn btn-info">Vote</button><br> </form>
+
+            <h3>Comments:</h3>
+            {% for comment in comments %}
+                {% if comment.news_id == some_news.id %}
+                    <div style="border: 3px solid #fff;">
+                        <b>{{comment}}</b><br>
+                        <b>from: {{comment.comment_author_name}}</b>; <b>date: {{comment.create_date}}</b>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <p><a href="{% url 'news_board:comment_create' some_news.id %}">Add comment</a></p>
+        </div>
+    {% endfor %}
+
+{% endblock %}

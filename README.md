@@ -1,4 +1,7 @@
 # News board
+```
+http://3.136.159.119/news_board/
+```
 
 
 ### With this web application, you can view the list of news with the ability to vote for them and comment on them.

@@ -70,6 +70,19 @@ services:
       - ./:/srv
       - ./commands:/srv/commands
 
+  nginx:
+    env_file:
+      - .env
+    image: nginx:1.19-alpine
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - static_content:/var/www/news_board
+    ports:
+      - 80:80
+      - 444:443
+    depends_on:
+      - backend
+
 volumes:
   pgdata: {}
   static_content: {}
